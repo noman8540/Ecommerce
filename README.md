@@ -1,4 +1,2 @@
 # Ecommerce
-This Ecommerce website is developed using Java Eclipse. The project also incorporates backend functionalities.
-
-The Ecommerce project is built in Java and utilizes Html, CSS, JS, and Sql for the backend operations.
+This website is built using Java and Spring Boot, with a SQL database for efficient data management. It has a user-friendly interface for browsing and purchasing products, as well as accessing personalized account information. Administrators can manage product listings by adding or removing items. The technology stack ensures high security, scalability, and streamlined operations for users and administrators.
