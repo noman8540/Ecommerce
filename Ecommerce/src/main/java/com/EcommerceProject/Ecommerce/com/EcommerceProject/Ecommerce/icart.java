@@ -9,5 +9,6 @@ public interface icart extends CrudRepository<cart, Integer>{
 	int countByRegister_id(int id);
 
     List<cart> findAllByRegister_id(int id);
+    void deleteByProduct_Id(int productId);
 
 }
