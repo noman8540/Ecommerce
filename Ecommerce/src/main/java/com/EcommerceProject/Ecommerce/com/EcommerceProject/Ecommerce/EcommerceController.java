@@ -1,5 +1,8 @@
 package com.EcommerceProject.Ecommerce.com.EcommerceProject.Ecommerce;
 
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -8,12 +11,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import ch.qos.logback.core.model.Model;
+
+
 import jakarta.servlet.http.HttpSession;
 
 
 
+
 @Controller
+
 public class EcommerceController {
 	
 	@Autowired
@@ -23,6 +29,9 @@ public class EcommerceController {
 	
 	@Autowired
 	icart ic;
+	
+	@Autowired
+	iOrder io;
 	 
 	
 	
@@ -44,11 +53,54 @@ public class EcommerceController {
 		return "login.jsp";
 	}
 	
+	//Login for admin Page
+	@RequestMapping("adminhome")
+	public ModelAndView adminhome(ModelMap mp)
+	{
+		mp.put("obj", ip.findAll());
+		ModelAndView mv = new ModelAndView();
+		mv.addAllObjects(mp);
+		
+		mv.setViewName("admin/adminhome.jsp");
+		
+		return mv;
+	}
+	
+	
+	@RequestMapping("delete")
+	public String delete(@RequestParam Integer id) {
+	    if (id != null) {
+	        ip.deleteById(id);
+	    }
+	    return "adminproduct";
+	}
+	
+	
+	
+
+	
+//	for data fetch by admin in product page
+
+	@RequestMapping("adminproduct")
+	public ModelAndView adminproduct(ModelMap mp)
+	{
+		mp.put("obj", ip.findAll());
+		ModelAndView mv = new ModelAndView();
+		mv.addAllObjects(mp);
+		
+		mv.setViewName("admin/adminproduct.jsp");
+		
+		return mv;
+	}
+
+	
+	
+	
 	
 	@RequestMapping("addproduct")
 	public String addproduct()
 	{
-		return "addproduct.jsp";
+		return "admin/addproduct.jsp";
 	}
 	
 	
@@ -67,9 +119,11 @@ public class EcommerceController {
 		
 		ir.save(p1);
 		
-		return "redirect:/products";	
+		return "adminproduct";	
 		
 	}
+	
+	
 	
 
 // For signup
@@ -106,12 +160,24 @@ public class EcommerceController {
         	session.setAttribute("eid", email);
         	return mv;
              
-             
         } else {
+        	
+        	if(email.equals("admin@gmail.com"))
+        	{
+        		session.setAttribute("eid", email);
+        		ModelAndView mv = new ModelAndView();
+                mv.setViewName("adminhome");
+                return mv;
+        	}
+        	
+        	else
+        	{
             
             ModelAndView mv = new ModelAndView();
             mv.setViewName("login.jsp");
             return mv;
+        
+        	}
         }
     }
 	
@@ -158,18 +224,25 @@ public class EcommerceController {
 
 	//Add to cart
 	@RequestMapping("addcart")
-	public String addcart(int id, String email)
+	public ModelAndView addcart(int id, String email)
 	{
 		Register r1 = ir.findByEmail(email);
 		product p1 = ip.findById(id);
+		
+		int i = ic.countByRegister_id(r1.getId());
+    	ModelAndView mv = new ModelAndView();
+    	mv.addObject("qty", i);
+    	mv.setViewName("cart");
 		
 		if (p1 != null)
 		{
 			cart c = new cart(p1, r1);
 			ic.save(c);
 		}
-		return "cart";
+		return mv;
 	}
+	
+	
 	
 	
 //	all cart
@@ -189,13 +262,14 @@ public class EcommerceController {
 	}
 	
 
-//	For delete the data
+//	For delete the data from cart
 	@RequestMapping("remove")
 	public String remove(int id)
 	{
 		ic.deleteById(id);
 		return "home";
 	}
+	
 	
 	
 	
@@ -207,8 +281,95 @@ public class EcommerceController {
 	}
 	
 	
+	@RequestMapping("aboutadmin")
+	public String aboutadmin()
+	{
+		return "admin/aboutadmin.jsp";
+	}
 	
 	
+//	for update data by admin
 
+	@RequestMapping("update")
+	public String update(int id,ModelMap mp)
+	{
+		product p1 = ip.findById(id);
+		
+		
+		mp.put("pro", p1);
+		return "admin/editproduct.jsp";
+		
+	
+	}
+	
+	
+	
+//	For update the data
+	@RequestMapping("editproduct")
+	public String editproduct(int id, String name, String description, String imageUrl, float price, int size)
+	{
+		product p1 = ip.findById(id);
+		
+		
+		p1.setId(id);
+		p1.setName(name);
+		p1.setDescription(description);
+		p1.setImageUrl(imageUrl);
+		p1.setPrice(price);
+		p1.setSize(size);
+		ip.save(p1);
+		
+		return "adminproduct";
+		
+	}
+	
+	@RequestMapping("order")
+	public ModelAndView order(ModelMap mp)
+	{
+		mp.put("orders", io.findAll());
+		ModelAndView mv = new ModelAndView();
+		mv.addAllObjects(mp);
+		
+		mv.setViewName("admin/order.jsp");
+		
+		return mv;
+	}
+	
+	
+	
+	
+	@RequestMapping("complete")
+	public String complete(String email, String pi, float total,String cid)
+	{	
+		String pid = "";
+		Register r1 = ir.findByEmail(email);
+		char[] arr = pi.toCharArray();
+		for(int i=1; i<arr.length;i++)
+		{
+			pid = pid + arr[i];
+		}
+		
+		Orderdetails o1=new Orderdetails(r1,total,pid);
+		io.save(o1);
+		String[] array = cid.split(",");
+	    for (String letter : array) {
+	      if(letter!="")
+	      {
+	      int c=Integer.valueOf(letter);
+	      ic.deleteById(c);
+	      }
+	    }
+		
+		return "home";
+	}
+		
+	
+	@RequestMapping("deleteorder")
+	public String deleteorder(int id)
+	{
+		io.deleteById(id);
+		return "order";
+	}
+	
 	
 }
