@@ -39,8 +39,8 @@
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 " id="navright">
                     <li class="nav-item">
-                        <%String email=(String) session.getAttribute("eid");
-                        if(email!=null)
+                        <%String id=(String) session.getAttribute("eid");
+                        if(id!=null)
                         {
                         	%>
                         	<a class="nav-link active" aria-current="page" href="logout">
@@ -66,7 +66,7 @@
                     HOME </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="cart?email=<%=email%>">
+                        <a class="nav-link active" aria-current="page" href="cart?email=<%=id%>">
                             <i class="fa-solid fa-cart-shopping fa-beat" style="color: #fff;"></i>
                             CART</a>
                     </li>
@@ -77,9 +77,7 @@
                         <a class="nav-link" href="about">ABOUT US</a>
                     </li>
 						
-					<li class="nav-item">
-                        <a class="nav-link" href="addproduct">ADD PRODUCT</a>
-                    </li>
+					
 
                 </ul>
                 
@@ -97,10 +95,13 @@
             <div class="col-md-10 col-11 mx-auto">
                 <div class="row mt-5 gx-3">
                     <!-- left side div -->
+                    
                     <div class="col-md-12 col-lg-8 col-11 mx-auto main_cart mb-lg-0 mb-5 shadow">
+                    <h2 class="py-4 font-weight-bold">Cart</h2>
+                    <%! int i=1; %>
                        <c:forEach items="${car}" var="pro">
                         <div class="card p-4">
-                            <h2 class="py-4 font-weight-bold">Cart</h2>
+                            
                             <div class="row">
                                 <!-- cart images div -->
                                 <div
@@ -121,15 +122,16 @@
                                         <div class="col-6">
                 <ul class="pagination justify-content-end set_quantity">
                     <li class="page-item">
-                        <button class="page-link" onclick="updateQuantity('textbox', 'itemval', -1)">
+                        <button class="page-link" onclick="updateQuantity('<%="textbox"+i%>', 'itemval', -1)">
                             <i class="fas fa-minus"></i>
                         </button>
                     </li>
                     <li class="page-item">
-                        <input type="text" name="" class="page-link" value="1" id="textbox">
+                        <input type="text" name="" class="page-link" value="1" id=<%="textbox"+i%>>
+                        <%i++; %>
                     </li>
                     <li class="page-item">
-                        <button class="page-link" onclick="updateQuantity('textbox', 'itemval', 1, ${pro.product.price})">
+                        <button class="page-link" onclick="updateQuantity('<%="textbox"+i%>', 'itemval', 1, ${pro.product.price})">
                             <i class="fas fa-plus"></i>
                         </button>
                     </li>
@@ -162,22 +164,42 @@
                     <div class="col-md-12 col-lg-4 col-11 mx-auto mt-lg-0 mt-md-5">
                         <div class="right_side p-3 shadow bg-white">
                             <h2 class="product_name mb-5">The Total Amount Of</h2>
+                            
+                            <%! int total=0; %>
                             <c:forEach items="${car}" var="pro">
                             <div class="price_indiv d-flex justify-content-between">
                                 <p>Product amount ${pro.product.price}</p>
                                 <p>$<span id="product_total_amt">${pro.product.price }</span></p>
+                           <c:set var="total" value="${total+pro.product.price }"/>
+                           <c:set var="pi" value="${pi},${pro.product.id}"/>
+							<c:set var="cid" value="${cid},${pro.id}"/>
+                            
+                           
                             </div>
+                            
+                            </c:forEach>
+                            
                             <div class="price_indiv d-flex justify-content-between">
                                 <p>Shipping Charge</p>
                                 <p>$<span id="shipping_charge">50.0</span></p>
                             </div>
+                            
                             <hr />
+                            
+                            
+                            
                             <div class="total-amt d-flex justify-content-between font-weight-bold">
                                 <p>The total amount of (including VAT)</p>
-                                <p>$<span id="total_cart_amt">${pro.product.price + 50 }</span></p>
+                                <p>$<span id="total_cart_amt"><c:out value="${total+50 }"/></span></p>
                             </div>
-                            </c:forEach>
+                            
+                            <a href="complete?email=<%=id%>&pi=${pi}&total=${total}&cid=${cid}" >
+                            
                             <button class="btn btn-primary text-uppercase">Checkout</button>
+                            </a>
+                            
+                            
+                            
                         </div>
                         <!-- discount code part -->
                         <div class="discount_code mt-3 shadow">
@@ -264,6 +286,13 @@
                 document.getElementById('error_trw').innerHTML = "Try Again! Valid code is MS";
             }
         }
+
+       
+
+        function showAlert() {
+            alert("Your order is successfully placed!");
+        }
+        
     </script>
 
     
