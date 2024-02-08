@@ -20,79 +20,14 @@
 
 <body>
 
-    <div class="navbg sticky-top " >
-        <nav class="navbar navbar-expand-lg bg-body-tertiary" id="navbg">
-            <div class="container-fluid">
-                <a class="navbar-brand" id="logo" href="home">ShopAll</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse " id="navbarSupportedContent">
-
-
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 " id="navright">
-                        <li class="nav-item">
-                        <%String email=(String) session.getAttribute("eid");
-                        if(email!=null)
-                        {
-                        	%>
-                        	<a class="nav-link active" aria-current="page" href="logout">
-                                <i class="fa-solid fa-user" style="color: #276add;"></i>
-                                Logout</a>
-                            <%
-                        }
-                        else
-                        {
-                        	%>
-                        	<a class="nav-link active" aria-current="page" href="login">
-                            <i class="fa-solid fa-user" style="color: #276add;"></i>
-                            Login</a>
-                            
-                        
-                        <% }%>
-                        
-                            
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="home">
-                                <i class="fa-solid fa-house" style="color: #1b5dd0;"></i>
-                        HOME </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="cart?email=<%=email%>">
-                                <i class="fa-solid fa-cart-shopping fa-beat" style="color: #296adb;"></i>
-                                CART</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="products">OUR PRODUCTS</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="about">ABOUT US</a>
-                        </li>
-                        
-                         <li class="nav-item">
-                            <a class="nav-link" href="addproduct">ADD PRODUCT</a>
-                        </li>
-
-
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2 " type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
-    </div>
+   <%@include file="header.jsp" %>
 
 
  <c:forEach items="${obj1}" var="prod1">
 <div class="card m-3" id="card">
                 <div class="row g-0">
                     <div class="col-md-5">
-                        <img src="image/${prod1.imageUrl}"
+                        <img src="images/${prod1.imageUrl}"
                             class="img-fluid rounded-start" id="detailImg" alt="...">
                     </div>
                     <div class="col-md-7">
@@ -118,5 +53,3 @@
 </c:forEach>
 
 <jsp:include page= "footer.jsp"/>
-</body>
-</html>
